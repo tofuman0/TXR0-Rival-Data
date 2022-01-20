@@ -28,11 +28,25 @@ namespace TXR0_Rival_Data
             public Int32 length;
             public DataGridViewColumn columnType;
         };
+        public struct ELFType
+        {
+            public ELFType(UInt32 _hash, UInt32 _address, String _type) { hash = _hash; address = _address; type = _type; }
+            public UInt32 hash;
+            public UInt32 address;
+            public String type;
+        }
         #endregion Structures
         #region Variables
         ParamData paramData = new ParamData("Rival Data");
         public DataSet dsParamData = null;
         Byte[] ELFData = null;
+        public readonly List<ELFType> elfTypes = new List<ELFType>()
+        {
+            new ELFType(0x562BCFD0, 0x165890, "US"),
+            new ELFType(0, 0, "EU"),
+            new ELFType(0xC3859771, 0x16C390, "JP")
+        };
+        public String elfType = "Unknown";
         #endregion Variables
         #region File Structures
         public readonly List<FileStructure> fsRivalData = new List<FileStructure>() {
@@ -160,7 +174,9 @@ namespace TXR0_Rival_Data
                     using (FileStream stream = new FileStream(DataFileName, FileMode.Open, FileAccess.Read))
                     {
                         BinaryReader reader = new BinaryReader(stream);
-                        reader.BaseStream.Position = 1464464; // Offset in SLUS_201.89
+                        UInt32 hash = GetHashFromELF(reader, 64);
+                        elfType = GetELFType(hash);
+                        reader.BaseStream.Position = GetELFDataOffset(hash); //1464464; // Offset in SLUS_201.89
                         data = reader.ReadBytes(59200);
                         if (data.Length != 59200)
                             return null;
@@ -319,10 +335,16 @@ namespace TXR0_Rival_Data
             if (FileName != null && ELFData != null)
             {
                 MemoryStream datastream = new MemoryStream(ELFData);
+                BinaryReader datareader = new BinaryReader(datastream);
+
+                UInt32 hash = GetHashFromELF(datareader, 64);
+                Int32 offset = Convert.ToInt32(GetELFDataOffset(hash));
+                elfType = GetELFType(hash);
+
                 BinaryWriter datawriter = new BinaryWriter(datastream);
                 using (FileStream stream = new FileStream(FileName, FileMode.Create, FileAccess.Write))
                 {
-                    datawriter.Seek(1464464, SeekOrigin.Begin);
+                    datawriter.Seek(offset, SeekOrigin.Begin);
                     datawriter.Write(data);
                     stream.Write(ELFData, 0, ELFData.Length);
                     ELFData = null; // Clear ELF Data once written
@@ -437,6 +459,34 @@ namespace TXR0_Rival_Data
                     return -1;
             }
             return -1;
+        }
+        private UInt32 GetHashFromELF(BinaryReader reader, UInt32 count)
+        {
+            UInt32 hash = 0;
+            for (UInt32 i = 0; i < count; i++)
+            {
+                hash = (hash >> 1) | ((hash & 1) << 31);
+                hash ^= reader.ReadUInt32();
+            }
+            return hash;
+        }
+        private UInt32 GetELFDataOffset(UInt32 hash)
+        {
+            for(Int32 i = 0; i < elfTypes.Count; i++)
+            {
+                if (elfTypes[i].hash == hash)
+                    return elfTypes[i].address;
+            }
+            return 0;
+        }
+        private String GetELFType(UInt32 hash)
+        {
+            for (Int32 i = 0; i < elfTypes.Count; i++)
+            {
+                if (elfTypes[i].hash == hash)
+                    return elfTypes[i].type;
+            }
+            return "Unknown";
         }
         #endregion Data Processing
     }
