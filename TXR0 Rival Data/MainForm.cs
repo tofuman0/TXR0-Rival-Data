@@ -76,22 +76,28 @@ namespace TXR0_Rival_Data
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(SaveFileDialog() == 0)
+            Int32 res = SaveFileDialog();
+            if (res == 0)
             {
                 Status.Text = filename;
                 this.Text = "TXR0 Rival Data - " + filename;
             }
+            else if (res > 0)
+                MessageBox.Show(this, "Error saving file", "Failed to save file", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void saveToELFToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (OpenFileDialog(true, true) == 0) // Load ELF for save
             {
-                if(SaveFileDialog(true) == 0)
+                Int32 res = SaveFileDialog(true);
+                if (res == 0)
                 {
                     Status.Text = filename;
                     this.Text = "TXR0 Rival Data - " + filename;
                 }
+                else if (res > 0)
+                    MessageBox.Show(this, "File is an unsupported version", "Failed to save file", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -218,61 +224,100 @@ namespace TXR0_Rival_Data
 
         private void SetDataSource(String tablename, DataTable dtData, String filter)
         {
+            ClearDataGridView();
             advancedDataGridView.DataSource = dtData;
             if(filter != null)
             {
                 (advancedDataGridView.DataSource as DataTable).DefaultView.RowFilter = String.Format(filter);
+            }
+            FormatDataGridView();
+            this.Text = "TXR0 Rival Data - " + filename;
+            Status.Text = filename;
+        }
+
+        private void ClearDataGridView()
+        {
+            while (advancedDataGridView.Columns.Count > 0)
+            {
+                advancedDataGridView.Columns.RemoveAt(0);
             }
         }
 
         private void LoadDataTable(DataTable dtData, String filter = null)
         {
             SetDataSource(dtData.TableName, dtData, filter);
+            pushToPCSX2ToolStripMenuItem.Enabled = true;
         }
 
         private void FormatDataGridView()
         {
-            foreach (DataGridViewColumn col in advancedDataGridView.Columns)
+            for (Int32 i = 0; i < advancedDataGridView.Columns.Count; i++)
             {
-                col.SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
+                advancedDataGridView.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
 
-            if (advancedDataGridView.Columns.Contains("Rival Number"))
-            {
-                //advancedDataGridView.Columns["Rival Number"].Frozen = true;
-                advancedDataGridView.Columns["Rival Number"].Visible = false;
-            }
+                if (advancedDataGridView.Columns[i].Name == "Rival Number" ||
+                    advancedDataGridView.Columns[i].Name =="R1" ||
+                    advancedDataGridView.Columns[i].Name =="G1" ||
+                    advancedDataGridView.Columns[i].Name =="B1" ||
+                    advancedDataGridView.Columns[i].Name =="R2" ||
+                    advancedDataGridView.Columns[i].Name =="G2" ||
+                    advancedDataGridView.Columns[i].Name =="B2"
+                    )
+                {
+                    advancedDataGridView.Columns[i].Visible = false;
+                }
+                else if (advancedDataGridView.Columns[i].Name == "Colour 1" || advancedDataGridView.Columns[i].Name == "Colour 2")
+                {
+                    String name = advancedDataGridView.Columns[i].Name;
+                    Int32 index = advancedDataGridView.Columns[i].Index;
+                    DataGridViewButtonColumn btnCol = new DataGridViewButtonColumn();
+                    btnCol.Name = name;
+                    btnCol.FlatStyle = FlatStyle.Flat;
 
-            foreach(DataGridViewColumn col in advancedDataGridView.Columns)
-            {
-                col.Width = TextRenderer.MeasureText(col.HeaderText, advancedDataGridView.Font).Width + 24;
+                    advancedDataGridView.Columns.RemoveAt(index);
+                    advancedDataGridView.Columns.Insert(index, btnCol);
 
-                if (col.Width < 80)
-                    col.Width = 80;
+                    foreach (DataGridViewRow row in advancedDataGridView.Rows)
+                    {
+                        String[] ColourLabels = { "R1", "G1", "B1" };
+                        if (name == "Colour 2")
+                        {
+                            ColourLabels = new String[] { "R2", "G2", "B2" };
+                        }
+                        Color color = Color.FromArgb(
+                            Convert.ToInt32(255.0 * Convert.ToSingle(row.Cells[ColourLabels[0]].Value)),
+                            Convert.ToInt32(255.0 * Convert.ToSingle(row.Cells[ColourLabels[1]].Value)),
+                            Convert.ToInt32(255.0 * Convert.ToSingle(row.Cells[ColourLabels[2]].Value))
+                            );
+                        row.Cells[name].Style.ForeColor = color;
+                        row.Cells[name].Style.BackColor = color;
+                        row.Cells[name].Style.SelectionBackColor = color;
+                        row.Cells[name].Style.SelectionForeColor = color;
+                    }
+                }
+
+                advancedDataGridView.Columns[i].Width = TextRenderer.MeasureText(advancedDataGridView.Columns[i].HeaderText, advancedDataGridView.Font).Width + 24;
+                if (advancedDataGridView.Columns[i].Width < 80)
+                    advancedDataGridView.Columns[i].Width = 80;
             }
 
             advancedDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             advancedDataGridView.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
-
-            //advancedDataGridView.Columns["Effect ID"].Frozen = true;
-            //advancedDataGridView.Columns["Effect ID"].Width = 96;
-            //advancedDataGridView.Columns["String"].Width = 516;
-            //advancedDataGridView.Columns["Detail"].Visible = false;
-            
         }
 
         private void advancedDataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             if (advancedDataGridView.DataSource != null)
             {
-                FormatDataGridView();
-                this.Text = "TXR0 Rival Data - " + filename;
+                //FormatDataGridView();
+                //this.Text = "TXR0 Rival Data - " + filename;
             }
         }
 
         private void advancedDataGridView_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
         {
             (advancedDataGridView.DataSource as DataTable).DefaultView.RowFilter = e.FilterString;
+            FormatDataGridView();
         }
 
         private void advancedDataGridView_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
@@ -301,6 +346,67 @@ namespace TXR0_Rival_Data
 
             var headerBounds = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, grid.RowHeadersWidth, e.RowBounds.Height);
             e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);
+        }
+
+        private void advancedDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var senderGrid = (DataGridView)sender;
+
+            if (e.RowIndex >= 0 && senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && senderGrid.Columns[e.ColumnIndex].Name.StartsWith("Colour "))
+            {
+                ColorDialog colorDialog = new ColorDialog();
+                colorDialog.Color = ((DataGridViewButtonCell)senderGrid.Rows[e.RowIndex].Cells[e.ColumnIndex]).Style.BackColor;
+                colorDialog.FullOpen = true;
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    ((DataGridViewButtonCell)senderGrid.Rows[e.RowIndex].Cells[e.ColumnIndex]).Style.ForeColor = colorDialog.Color;
+                    ((DataGridViewButtonCell)senderGrid.Rows[e.RowIndex].Cells[e.ColumnIndex]).Style.BackColor = colorDialog.Color;
+                    ((DataGridViewButtonCell)senderGrid.Rows[e.RowIndex].Cells[e.ColumnIndex]).Style.SelectionForeColor = colorDialog.Color;
+                    ((DataGridViewButtonCell)senderGrid.Rows[e.RowIndex].Cells[e.ColumnIndex]).Style.SelectionBackColor = colorDialog.Color;
+
+                    String[] ColourLabels = { "R1", "G1", "B1" };
+                    if (senderGrid.Columns[e.ColumnIndex].Name == "Colour 2")
+                    {
+                        ColourLabels = new String[] { "R2", "G2", "B2" };
+                    }
+                    senderGrid.Rows[e.RowIndex].Cells[ColourLabels[0]].Value = colorDialog.Color.R * 0.003921568627451;
+                    senderGrid.Rows[e.RowIndex].Cells[ColourLabels[1]].Value = colorDialog.Color.G * 0.003921568627451;
+                    senderGrid.Rows[e.RowIndex].Cells[ColourLabels[2]].Value = colorDialog.Color.B * 0.003921568627451;
+                }
+            }
+        }
+
+        private void pullFromPCSX2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String res;
+            if (paramDataManager.PCSX2.OpenProcess("pcsx2.exe", out res) == true)
+            {
+                dsParamData = paramDataManager.PullFromPCSX2("Rival Data", paramDataManager.fsRivalData);
+                if (dsParamData == null)
+                {
+                    MessageBox.Show(this, "Failed to pull data from PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                else
+                {
+                    filename = "Loaded from PCSX2";
+                    LoadDataTable(dsParamData.Tables["Rival Data"]);
+                }
+            }
+            else
+                MessageBox.Show(this, "Failed to attach to PCSX2: " + res, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void pushToPCSX2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String res;
+            if (paramDataManager.PCSX2.OpenProcess("pcsx2.exe", out res) == true)
+            {
+                if (paramDataManager.PushToPCSX2() == false)
+                    MessageBox.Show(this, "Failed to push data to PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+                MessageBox.Show(this, "Failed to attach to PCSX2: " + res, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

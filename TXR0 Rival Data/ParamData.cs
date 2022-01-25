@@ -27,10 +27,21 @@ namespace TXR0_Rival_Data
             {
                 if (structure.varType != ParamDataManager.VarType.DataLength && dt.Columns.Contains(structure.name) == false)
                 {
-                    if(structure.dataType == typeof(Int32[]))
+                    if (structure.dataType == typeof(Int32[]))
                         dt.Columns.Add(structure.name, typeof(String));
                     else
-                        dt.Columns.Add(structure.name, structure.dataType);
+                    {
+                        if (structure.dataType != typeof(String) && structure.length != 0)
+                        {
+                            for (Int32 i = 0; i < structure.length; i++)
+                            {
+                                String colname = structure.name + Convert.ToString(i + 1);
+                                dt.Columns.Add(colname, structure.dataType);
+                            }
+                        }
+                        else
+                            dt.Columns.Add(structure.name, structure.dataType);
+                    }
                 }
             }
             dsDataStructure.Tables.Add(dt);

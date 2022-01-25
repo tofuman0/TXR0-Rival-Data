@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data;
 using System.IO;
 using System.Windows.Forms;
+using Memory;
 
 namespace TXR0_Rival_Data
 {
@@ -16,7 +17,8 @@ namespace TXR0_Rival_Data
             Data,
             DataLength,
             Index,
-            Index1
+            Index1,
+            Button
         };
         #region Structures
         public struct FileStructure
@@ -43,104 +45,80 @@ namespace TXR0_Rival_Data
         public readonly List<ELFType> elfTypes = new List<ELFType>()
         {
             new ELFType(0x562BCFD0, 0x165890, "US"),
-            new ELFType(0, 0, "EU"),
+            new ELFType(0x765A0E92, 0x165E90, "EU"),
             new ELFType(0xC3859771, 0x16C390, "JP")
         };
         public String elfType = "Unknown";
+        public Mem PCSX2 = new Mem();
         #endregion Variables
         #region File Structures
         public readonly List<FileStructure> fsRivalData = new List<FileStructure>() {
-            new FileStructure(VarType.Index1, typeof(Int32), "Rival Number"), // 0x00
-            new FileStructure(VarType.Data, typeof(Int16), "Team Member ID"), // 0x00
-            new FileStructure(VarType.Data, typeof(Int16), "Appear Flag?"), // 0x02
-            new FileStructure(VarType.Data, typeof(Int16), "Car ID"), // 0x04
-            new FileStructure(VarType.Data, typeof(Int16), "Team ID"), // 0x06
-            new FileStructure(VarType.Data, typeof(Int16), "Difficulty Table?"), // 0x08
-            new FileStructure(VarType.Data, typeof(Int16), "Unknown 1"), // 0x0a
-            new FileStructure(VarType.Data, typeof(Int16), "Flag 1"), // 0x0c
-            new FileStructure(VarType.Data, typeof(Int16), "Unknown 2"), // 0x0e
-            new FileStructure(VarType.Data, typeof(Int32), "Increment"), // 0x10
-            new FileStructure(VarType.Data, typeof(String), "Rival Name 1", 0x11), // 0x14
-            new FileStructure(VarType.Data, typeof(String), "Rival Name 2", 0x11), // 0x25
-            new FileStructure(VarType.Data, typeof(Int16), "Rival Type"), // 0x36
-            new FileStructure(VarType.Data, typeof(Int16), "Area?"), // 0x36
-            new FileStructure(VarType.Data, typeof(Byte), "Flag 2"),  // 0x3a
-            new FileStructure(VarType.Data, typeof(Byte), "Flag 3"),  // 0x3b
-            new FileStructure(VarType.Data, typeof(Byte), "Flag 4"),  // 0x3c
-            new FileStructure(VarType.Data, typeof(Byte), "Flag 5"), // 0x3d
-            new FileStructure(VarType.Data, typeof(Byte), "Flag 6"), // 0x3e
-            new FileStructure(VarType.Data, typeof(Byte), "Flag 7"), // 0x3f
-            new FileStructure(VarType.Data, typeof(Byte), "Flag 8"), // 0x40
-            new FileStructure(VarType.Data, typeof(Byte), "Flag 9"), // 0x41
-            new FileStructure(VarType.Data, typeof(Byte), "Flag 10"), // 0x42
-            new FileStructure(VarType.Data, typeof(Byte), "Flag 11"), // 0x43
-            new FileStructure(VarType.Data, typeof(Int16), "Sticker"), // 0x44
-            new FileStructure(VarType.Data, typeof(Byte), "Fender"), // 0x46
-            new FileStructure(VarType.Data, typeof(Byte), "Front Bumper"), // 0x48
-            new FileStructure(VarType.Data, typeof(Byte), "Bonnet"), // 0x49
-            new FileStructure(VarType.Data, typeof(Byte), "Mirrors"), // 0x4a
-            new FileStructure(VarType.Data, typeof(Byte), "Side Skirts"), // 0x4b
-            new FileStructure(VarType.Data, typeof(Byte), "Rear Bumper"), // 0x4c
-            new FileStructure(VarType.Data, typeof(Byte), "Wing"), // 0x4d
-            new FileStructure(VarType.Data, typeof(Byte), "Grill"), // 0x4e
-            new FileStructure(VarType.Data, typeof(Byte), "Lights"), // 0x4f
-            new FileStructure(VarType.Data, typeof(Byte), "Wheels?"), // 0x50
-            new FileStructure(VarType.Data, typeof(Byte), "Wheel Colour 1"), // 0x51
-            new FileStructure(VarType.Data, typeof(Byte), "Wheel Colour 2"), // 0x52
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 3"), // 0x53
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 4"), // 0x54
-            new FileStructure(VarType.Data, typeof(Byte), "Engine"), // 0x55
-            new FileStructure(VarType.Data, typeof(Byte), "Exhaust"), // 0x56
-            new FileStructure(VarType.Data, typeof(Byte), "Transmission"), // 0x57
-            new FileStructure(VarType.Data, typeof(Byte), "Differential"), // 0x58
-            new FileStructure(VarType.Data, typeof(Byte), "Tyres"), // 0x59
-            new FileStructure(VarType.Data, typeof(Byte), "Brakes"), // 0x5a
-            new FileStructure(VarType.Data, typeof(Byte), "Suspension"), // 0x5b
-            new FileStructure(VarType.Data, typeof(Byte), "Body"), // 0x5c
-            new FileStructure(VarType.Data, typeof(SByte), "Handling"), // 0x5d
-            new FileStructure(VarType.Data, typeof(SByte), "Acceleration"), // 0x5e
-            new FileStructure(VarType.Data, typeof(SByte), "Braking"), // 0x5f
-            new FileStructure(VarType.Data, typeof(SByte), "Brake Balance"), // 0x60
-            new FileStructure(VarType.Data, typeof(SByte), "Spring Rate Front"), // 0x61
-            new FileStructure(VarType.Data, typeof(SByte), "Spring Rate Rear"), // 0x62
-            new FileStructure(VarType.Data, typeof(SByte), "Damper Rate Front"), // 0x63
-            new FileStructure(VarType.Data, typeof(SByte), "Damper Rate Rear"), // 0x64
-            new FileStructure(VarType.Data, typeof(SByte), "Gear Ratio 1"), // 0x65
-            new FileStructure(VarType.Data, typeof(SByte), "Gear Ratio 2"), // 0x66
-            new FileStructure(VarType.Data, typeof(SByte), "Gear Ratio 3"), // 0x67
-            new FileStructure(VarType.Data, typeof(SByte), "Gear Ratio 4"), // 0x68
-            new FileStructure(VarType.Data, typeof(SByte), "Gear Ratio 5"), // 0x69
-            new FileStructure(VarType.Data, typeof(SByte), "Gear Ratio 6"), // 0x6a
-            new FileStructure(VarType.Data, typeof(SByte), "Final Drive"), // 0x6b
-            new FileStructure(VarType.Data, typeof(SByte), "Suspension Height Front"), // 0x6c
-            new FileStructure(VarType.Data, typeof(SByte), "Suspension Height Rear"), // 0x6d
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 5"), // 0x6e
-            new FileStructure(VarType.Data, typeof(Byte), "Wheels"), // 0x6f
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 6"), // 0x6f
-            new FileStructure(VarType.Data, typeof(Single), "R1"), //
+            new FileStructure(VarType.Index1, typeof(Int32), "Rival Number"),
+            new FileStructure(VarType.Data, typeof(Int16), "Team Member ID"),
+            new FileStructure(VarType.Data, typeof(Int16), "Appear Flag?"),
+            new FileStructure(VarType.Data, typeof(Int16), "Car ID"),
+            new FileStructure(VarType.Data, typeof(Int16), "Team ID"),
+            new FileStructure(VarType.Data, typeof(Int16), "Battle Requirement"),
+            new FileStructure(VarType.Data, typeof(Int16), "Unknown 1"),
+            new FileStructure(VarType.Data, typeof(Int16), "Flag"),
+            new FileStructure(VarType.Data, typeof(Int16), "Unknown 2"),
+            new FileStructure(VarType.Data, typeof(Int32), "Increment"),
+            new FileStructure(VarType.Data, typeof(String), "Rival Name 1", 0x11),
+            new FileStructure(VarType.Data, typeof(String), "Rival Name 2", 0x11),
+            new FileStructure(VarType.Data, typeof(Int16), "Rival Type"),
+            new FileStructure(VarType.Data, typeof(Int16), "Area?"),
+            new FileStructure(VarType.Data, typeof(Byte), "Flag ", 10),
+            new FileStructure(VarType.Data, typeof(Int16), "Sticker"),
+            new FileStructure(VarType.Data, typeof(Byte), "Fender"),
+            new FileStructure(VarType.Data, typeof(Byte), "Front Bumper"),
+            new FileStructure(VarType.Data, typeof(Byte), "Bonnet"),
+            new FileStructure(VarType.Data, typeof(Byte), "Mirrors"),
+            new FileStructure(VarType.Data, typeof(Byte), "Side Skirts"),
+            new FileStructure(VarType.Data, typeof(Byte), "Rear Bumper"),
+            new FileStructure(VarType.Data, typeof(Byte), "Wing"),
+            new FileStructure(VarType.Data, typeof(Byte), "Grill"),
+            new FileStructure(VarType.Data, typeof(Byte), "Lights"),
+            new FileStructure(VarType.Data, typeof(Byte), "Wheels?"),
+            new FileStructure(VarType.Data, typeof(Byte), "Wheel Colour 1"),
+            new FileStructure(VarType.Data, typeof(Byte), "Wheel Colour 2"),
+            new FileStructure(VarType.Data, typeof(Byte), "Unknown 3_", 2),
+            new FileStructure(VarType.Data, typeof(Byte), "Engine"),
+            new FileStructure(VarType.Data, typeof(Byte), "Exhaust"),
+            new FileStructure(VarType.Data, typeof(Byte), "Transmission"),
+            new FileStructure(VarType.Data, typeof(Byte), "Differential"),
+            new FileStructure(VarType.Data, typeof(Byte), "Tyres"),
+            new FileStructure(VarType.Data, typeof(Byte), "Brakes"),
+            new FileStructure(VarType.Data, typeof(Byte), "Suspension"),
+            new FileStructure(VarType.Data, typeof(Byte), "Body"),
+            new FileStructure(VarType.Data, typeof(SByte), "Handling"),
+            new FileStructure(VarType.Data, typeof(SByte), "Acceleration"),
+            new FileStructure(VarType.Data, typeof(SByte), "Braking"),
+            new FileStructure(VarType.Data, typeof(SByte), "Brake Balance"),
+            new FileStructure(VarType.Data, typeof(SByte), "Spring Rate Front"),
+            new FileStructure(VarType.Data, typeof(SByte), "Spring Rate Rear"),
+            new FileStructure(VarType.Data, typeof(SByte), "Damper Rate Front"),
+            new FileStructure(VarType.Data, typeof(SByte), "Damper Rate Rear"),
+            new FileStructure(VarType.Data, typeof(SByte), "Gear Ratio ", 6),
+            new FileStructure(VarType.Data, typeof(SByte), "Final Drive"),
+            new FileStructure(VarType.Data, typeof(SByte), "Suspension Height Front"),
+            new FileStructure(VarType.Data, typeof(SByte), "Suspension Height Rear"),
+            new FileStructure(VarType.Data, typeof(Byte), "Unknown 5"),
+            new FileStructure(VarType.Data, typeof(Byte), "Wheels"),
+            new FileStructure(VarType.Data, typeof(Byte), "Unknown 6"),
+            new FileStructure(VarType.Button, typeof(String), "Colour 1"),
+            new FileStructure(VarType.Data, typeof(Single), "R1"),
             new FileStructure(VarType.Data, typeof(Single), "G1"),
             new FileStructure(VarType.Data, typeof(Single), "B1"),
+            new FileStructure(VarType.Button, typeof(String), "Colour 2"),
             new FileStructure(VarType.Data, typeof(Single), "R2"),
             new FileStructure(VarType.Data, typeof(Single), "G2"),
             new FileStructure(VarType.Data, typeof(Single), "B2"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 7"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 8"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 9"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 10"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 11"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 12"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 13"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 14"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 15"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 16"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 17"),
-            new FileStructure(VarType.Data, typeof(Byte), "Unknown 18")
+            new FileStructure(VarType.Data, typeof(Byte), "Unknown 7_", 12)
         };                                                         
         #endregion File Structures
         #region Data Loading
         public DataSet OpenFile(String TableName, String DataFileName, List<FileStructure> FileStructure)
         {
-            //try
             {
                 Byte[] data = null;
 
@@ -157,11 +135,6 @@ namespace TXR0_Rival_Data
                     return null;
                 return dsParamData;
             }
-            //catch(Exception ex)
-            //{
-            //    MessageBox.Show(null, ex.Message, "Error loading data files", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    return null;
-            //}
         }
         public DataSet OpenELFFile(String TableName, String DataFileName, List<FileStructure> FileStructure)
         {
@@ -176,9 +149,15 @@ namespace TXR0_Rival_Data
                         BinaryReader reader = new BinaryReader(stream);
                         UInt32 hash = GetHashFromELF(reader, 64);
                         elfType = GetELFType(hash);
-                        reader.BaseStream.Position = GetELFDataOffset(hash); //1464464; // Offset in SLUS_201.89
-                        data = reader.ReadBytes(59200);
-                        if (data.Length != 59200)
+                        UInt32 dataOffset = GetELFDataOffset(hash);
+                        if (dataOffset != 0)
+                        {
+                            reader.BaseStream.Position = dataOffset; //1464464; // Offset in SLUS_201.89
+                            data = reader.ReadBytes(59200);
+                            if (data.Length != 59200)
+                                return null;
+                        }
+                        else
                             return null;
                     }
                 }
@@ -213,7 +192,6 @@ namespace TXR0_Rival_Data
         }
         private DataSet LoadTableData(Byte[] data, String TableName, List<FileStructure> structures)
         {
-            //try
             {
                 Int32 dataOffset = 0;
                 Int32 dataCount = 0;
@@ -236,6 +214,10 @@ namespace TXR0_Rival_Data
                                 length = GetValue(data, dataOffset, structure.dataType);
                                 dataOffset += GetTypeLength(structure.dataType);
                             }
+                            else if (structure.varType == VarType.Button)
+                            {
+                                newRow[structure.name] = "btn:" + structure.name;
+                            }
                             else if (structure.varType == VarType.Index || structure.varType == VarType.Index1)
                             {
                                 newRow[structure.name] = (structure.varType == VarType.Index) ? i : i + 1;
@@ -249,8 +231,20 @@ namespace TXR0_Rival_Data
                             }
                             else if (structure.dataType != typeof(System.String))
                             {
-                                newRow[structure.name] = GetValue(data, dataOffset, structure.dataType);
-                                dataOffset += GetTypeLength(structure.dataType);
+                                if (structure.length != 0)
+                                {
+                                    for (Int32 j = 0; j < structure.length; j++)
+                                    {
+                                        String name = structure.name + Convert.ToString(j + 1);
+                                        newRow[name] = GetValue(data, dataOffset, structure.dataType);
+                                        dataOffset += GetTypeLength(structure.dataType);
+                                    }
+                                }
+                                else
+                                {
+                                    newRow[structure.name] = GetValue(data, dataOffset, structure.dataType);
+                                    dataOffset += GetTypeLength(structure.dataType);
+                                }
                             }
                         }
                         dtTable.Rows.Add(newRow);
@@ -260,10 +254,79 @@ namespace TXR0_Rival_Data
                 else
                     return null;
             }
-            //catch (Exception)
-            //{
-            //    return null;
-            //}
+        }
+        private Int32 FindPCSX2Offset(String byteString)
+        {
+            if (PCSX2.mProc.Process != null)
+            {
+                Int32 offset;
+                var find = PCSX2.AoBScan(byteString, true, true);
+                find.Wait();
+                var res = find.Result;
+                offset = Convert.ToInt32(res.SingleOrDefault());
+                return offset;
+            }
+            else
+                return 0;
+        }
+        private Int32 FindPCSX2Offset(Byte[] bytes)
+        {
+            if (PCSX2.mProc.Process != null)
+            {
+                String byteString = "";
+                Int32 offset;
+                foreach (Byte thisByte in bytes)
+                {
+                    byteString += thisByte.ToString("X02") + " ";
+                }
+                byteString = byteString.Substring(0, byteString.Length - 1);
+                var find = PCSX2.AoBScan(byteString, true, true);
+                find.Wait();
+                var res = find.Result;
+                offset = Convert.ToInt32(res.SingleOrDefault());
+                return offset;
+            }
+            else
+                return 0;
+        }
+        public DataSet PullFromPCSX2(String TableName, List<FileStructure> FileStructure)
+        {
+            if (PCSX2.mProc.Process != null)
+            {
+                Byte[] data = null;
+                Int32 LoadedGameDataPtr = FindPCSX2Offset(
+                    "20 ?? 36 00 E0 ?? 27 00 00 00 00 00 30 ?? 36 00 " +
+                    "40 ?? 26 00 01 00 00 00 40 ?? 36 00 80 ?? 26 00 " +
+                    "01 00 00 00 60 ?? 36 00 ?? ?? 2D 00 00 00 00 00 " +
+                    "80 ?? 36 00 ?? ?? 2D 00 00 00 00 00 A0 ?? 36 00 " +
+                    "A0 ?? 26 00 00 00 00 00 C0 ?? 36 00 ?? ?? 2D 00 " +
+                    "00 00 00 00 D0 ?? 36 00 B0 ?? 26 00 00 00 00 00 " +
+                    "E0 ?? 36 00 F0 ?? 26 00 00 00 00 00 F8 ?? 36 00 " +
+                    "D0 ?? 26 00 02 00 00 00 00 00 00 00 00 00 00 00"
+                    );
+                if (LoadedGameDataPtr != 0)
+                {
+                    LoadedGameDataPtr += 0x80; // Offset which adjusts to rival data
+                    String dataOffset = LoadedGameDataPtr.ToString("X");
+                    if (dataOffset != "")
+                    {
+                        data = PCSX2.ReadBytes(dataOffset, 59200);
+                        if (data.Length != 59200)
+                            return null;
+                    }
+                }
+                else
+                    return null;
+                if (data != null)
+                {
+                    dsParamData = null;
+                    return LoadTableData(data, TableName, FileStructure);
+                }
+                else
+                    return null;
+            }
+            else
+                return null;
         }
         #endregion Data Loading
         #region Data Saving
@@ -280,46 +343,63 @@ namespace TXR0_Rival_Data
                     {
                         foreach (FileStructure structure in fsRivalData)
                         {
-                            if (structure.varType != VarType.Index && structure.varType != VarType.Index1) // Ignore index var types as those are used by this app not game
+                            if (structure.varType != VarType.Index && structure.varType != VarType.Index1 && structure.varType != VarType.Button) // Ignore index and button var types as those are used by this app not game
                             {
-                                var cell = row[structure.name];
-                                if (structure.dataType == typeof(Int32))
+                                Func<String, Int32> writedata = (String name) =>
                                 {
-                                    datawriter.Write(Convert.ToInt32(cell));
-                                }
-                                else if (structure.dataType == typeof(UInt32))
-                                {
-                                    datawriter.Write(Convert.ToUInt32(cell));
-                                }
-                                else if (structure.dataType == typeof(Int16))
-                                {
-                                    datawriter.Write(Convert.ToInt16(cell));
-                                }
-                                else if (structure.dataType == typeof(UInt16))
-                                {
-                                    datawriter.Write(Convert.ToUInt16(cell));
-                                }
-                                else if (structure.dataType == typeof(SByte))
-                                {
-                                    datawriter.Write(Convert.ToSByte(cell));
-                                }
-                                else if (structure.dataType == typeof(Byte))
-                                {
-                                    datawriter.Write(Convert.ToByte(cell));
-                                }
-                                else if (structure.dataType == typeof(String))
-                                {
-                                    Byte[] tempstringbuf = new Byte[structure.length];
-                                    Byte[] cellbytes = Encoding.ASCII.GetBytes(cell.ToString());
-                                    for (Int32 i = 0; i < cell.ToString().Length; i++)
+                                    var cell = row[name];
+                                    if (structure.dataType == typeof(Int32))
                                     {
-                                        tempstringbuf[i] = cellbytes[i];
+                                        datawriter.Write(Convert.ToInt32(cell));
                                     }
-                                    datawriter.Write(tempstringbuf);
-                                }
-                                else if (structure.dataType == typeof(Single))
+                                    else if (structure.dataType == typeof(UInt32))
+                                    {
+                                        datawriter.Write(Convert.ToUInt32(cell));
+                                    }
+                                    else if (structure.dataType == typeof(Int16))
+                                    {
+                                        datawriter.Write(Convert.ToInt16(cell));
+                                    }
+                                    else if (structure.dataType == typeof(UInt16))
+                                    {
+                                        datawriter.Write(Convert.ToUInt16(cell));
+                                    }
+                                    else if (structure.dataType == typeof(SByte))
+                                    {
+                                        datawriter.Write(Convert.ToSByte(cell));
+                                    }
+                                    else if (structure.dataType == typeof(Byte))
+                                    {
+                                        datawriter.Write(Convert.ToByte(cell));
+                                    }
+                                    else if (structure.dataType == typeof(String))
+                                    {
+                                        Byte[] tempstringbuf = new Byte[structure.length];
+                                        //Byte[] cellbytes = Encoding.ASCII.GetBytes(cell.ToString());
+                                        Byte[] cellbytes = System.Text.Encoding.GetEncoding(932).GetBytes(cell.ToString());
+                                        for (Int32 i = 0; i < cellbytes.Count(); i++)
+                                        {
+                                            tempstringbuf[i] = cellbytes[i];
+                                        }
+                                        datawriter.Write(tempstringbuf);
+                                    }
+                                    else if (structure.dataType == typeof(Single))
+                                    {
+                                        datawriter.Write(Convert.ToSingle(cell));
+                                    }
+                                    return 0;
+                                };
+
+                                if (structure.dataType != typeof(String) && structure.length > 0)
                                 {
-                                    datawriter.Write(Convert.ToSingle(cell));
+                                    for (Int32 i = 0; i < structure.length; i++)
+                                    {
+                                        writedata(structure.name + Convert.ToString(i + 1));
+                                    }
+                                }
+                                else
+                                {
+                                    writedata(structure.name);
                                 }
                             }
                         }
@@ -338,18 +418,23 @@ namespace TXR0_Rival_Data
                 BinaryReader datareader = new BinaryReader(datastream);
 
                 UInt32 hash = GetHashFromELF(datareader, 64);
-                Int32 offset = Convert.ToInt32(GetELFDataOffset(hash));
+                Int32 dataOffset = Convert.ToInt32(GetELFDataOffset(hash));
                 elfType = GetELFType(hash);
 
-                BinaryWriter datawriter = new BinaryWriter(datastream);
-                using (FileStream stream = new FileStream(FileName, FileMode.Create, FileAccess.Write))
+                if (dataOffset != 0)
                 {
-                    datawriter.Seek(offset, SeekOrigin.Begin);
-                    datawriter.Write(data);
-                    stream.Write(ELFData, 0, ELFData.Length);
-                    ELFData = null; // Clear ELF Data once written
-                    return true;
+                    BinaryWriter datawriter = new BinaryWriter(datastream);
+                    using (FileStream stream = new FileStream(FileName, FileMode.Create, FileAccess.Write))
+                    {
+                        datawriter.Seek(dataOffset, SeekOrigin.Begin);
+                        datawriter.Write(data);
+                        stream.Write(ELFData, 0, ELFData.Length);
+                        ELFData = null; // Clear ELF Data once written
+                        return true;
+                    }
                 }
+                else
+                    return false;
             }
             return false;
         }
@@ -363,6 +448,38 @@ namespace TXR0_Rival_Data
                     stream.Write(data, 0, data.Length);
                     return true;
                 }
+            }
+            else
+                return false;
+        }
+        public bool PushToPCSX2()
+        {
+            if (PCSX2.mProc.Process != null)
+            {
+                Int32 LoadedGameDataPtr = FindPCSX2Offset(
+                    "20 ?? 36 00 E0 ?? 27 00 00 00 00 00 30 ?? 36 00 " +
+                    "40 ?? 26 00 01 00 00 00 40 ?? 36 00 80 ?? 26 00 " +
+                    "01 00 00 00 60 ?? 36 00 ?? ?? 2D 00 00 00 00 00 " +
+                    "80 ?? 36 00 ?? ?? 2D 00 00 00 00 00 A0 ?? 36 00 " +
+                    "A0 ?? 26 00 00 00 00 00 C0 ?? 36 00 ?? ?? 2D 00 " +
+                    "00 00 00 00 D0 ?? 36 00 B0 ?? 26 00 00 00 00 00 " +
+                    "E0 ?? 36 00 F0 ?? 26 00 00 00 00 00 F8 ?? 36 00 " +
+                    "D0 ?? 26 00 02 00 00 00 00 00 00 00 00 00 00 00"
+                    );
+                if (LoadedGameDataPtr != 0)
+                {
+                    LoadedGameDataPtr += 0x80; // Offset which adjusts to rival data
+                    String dataOffset = LoadedGameDataPtr.ToString("X");
+                    if (dataOffset != "")
+                    {
+                        Byte[] data = GetByteDataFromTable("Rival Data");
+                        PCSX2.WriteBytes(dataOffset, data);
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+                return false;
             }
             else
                 return false;
@@ -418,7 +535,9 @@ namespace TXR0_Rival_Data
                 {
                     length = GetStringLength(data, offset);
                 }
-                String dataString = System.Text.ASCIIEncoding.ASCII.GetString(data, offset, length);
+                //String dataString = System.Text.ASCIIEncoding.ASCII.GetString(data, offset, length);
+                String dataString = System.Text.Encoding.GetEncoding(932).GetString(data, offset, length);
+                //String dataString = System.Text.Encoding.GetEncoding(51932).GetString(data, offset, length);
                 value = dataString;
             }
             return value;

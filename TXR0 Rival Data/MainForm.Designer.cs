@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
@@ -37,13 +37,16 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFromELFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToELFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.advancedDataGridView = new Zuby.ADGV.AdvancedDataGridView();
-            this.saveToELFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.developmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pullFromPCSX2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pushToPCSX2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStripMain.SuspendLayout();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView)).BeginInit();
@@ -72,6 +75,7 @@
             this.menuStripMain.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.developmentToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
@@ -116,6 +120,13 @@
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
             // 
+            // saveToELFToolStripMenuItem
+            // 
+            this.saveToELFToolStripMenuItem.Name = "saveToELFToolStripMenuItem";
+            this.saveToELFToolStripMenuItem.Size = new System.Drawing.Size(242, 26);
+            this.saveToELFToolStripMenuItem.Text = "Save To ELF";
+            this.saveToELFToolStripMenuItem.Click += new System.EventHandler(this.saveToELFToolStripMenuItem_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -154,8 +165,8 @@
             // 
             this.advancedDataGridView.AllowUserToAddRows = false;
             this.advancedDataGridView.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
-            this.advancedDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Beige;
+            this.advancedDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
             this.advancedDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.advancedDataGridView.ColumnHeadersHeight = 29;
             this.advancedDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
@@ -171,15 +182,33 @@
             this.advancedDataGridView.TabIndex = 6;
             this.advancedDataGridView.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.advancedDataGridView_SortStringChanged);
             this.advancedDataGridView.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.advancedDataGridView_FilterStringChanged);
+            this.advancedDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.advancedDataGridView_CellContentClick);
             this.advancedDataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.advancedDataGridView_DataBindingComplete);
             this.advancedDataGridView.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.advancedDataGridView_RowPostPaint);
             // 
-            // saveToELFToolStripMenuItem
+            // developmentToolStripMenuItem
             // 
-            this.saveToELFToolStripMenuItem.Name = "saveToELFToolStripMenuItem";
-            this.saveToELFToolStripMenuItem.Size = new System.Drawing.Size(242, 26);
-            this.saveToELFToolStripMenuItem.Text = "Save To ELF";
-            this.saveToELFToolStripMenuItem.Click += new System.EventHandler(this.saveToELFToolStripMenuItem_Click);
+            this.developmentToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pullFromPCSX2ToolStripMenuItem,
+            this.pushToPCSX2ToolStripMenuItem});
+            this.developmentToolStripMenuItem.Name = "developmentToolStripMenuItem";
+            this.developmentToolStripMenuItem.Size = new System.Drawing.Size(113, 24);
+            this.developmentToolStripMenuItem.Text = "Development";
+            // 
+            // pullFromPCSX2ToolStripMenuItem
+            // 
+            this.pullFromPCSX2ToolStripMenuItem.Name = "pullFromPCSX2ToolStripMenuItem";
+            this.pullFromPCSX2ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.pullFromPCSX2ToolStripMenuItem.Text = "Pull from PCSX2";
+            this.pullFromPCSX2ToolStripMenuItem.Click += new System.EventHandler(this.pullFromPCSX2ToolStripMenuItem_Click);
+            // 
+            // pushToPCSX2ToolStripMenuItem
+            // 
+            this.pushToPCSX2ToolStripMenuItem.Enabled = false;
+            this.pushToPCSX2ToolStripMenuItem.Name = "pushToPCSX2ToolStripMenuItem";
+            this.pushToPCSX2ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.pushToPCSX2ToolStripMenuItem.Text = "Push to PCSX2";
+            this.pushToPCSX2ToolStripMenuItem.Click += new System.EventHandler(this.pushToPCSX2ToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -220,6 +249,9 @@
         private Zuby.ADGV.AdvancedDataGridView advancedDataGridView;
         private System.Windows.Forms.ToolStripMenuItem openFromELFToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToELFToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem developmentToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pullFromPCSX2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pushToPCSX2ToolStripMenuItem;
     }
 }
 
