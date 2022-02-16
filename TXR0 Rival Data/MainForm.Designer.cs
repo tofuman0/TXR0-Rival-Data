@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
@@ -40,15 +40,17 @@
             this.saveToELFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.advancedDataGridView = new Zuby.ADGV.AdvancedDataGridView();
             this.developmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pullFromPCSX2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pushToPCSX2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuActions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyValueToWholeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.advancedDataGridView = new Zuby.ADGV.AdvancedDataGridView();
             this.statusStripMain.SuspendLayout();
             this.menuStripMain.SuspendLayout();
+            this.contextMenuActions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -140,6 +142,30 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
+            // developmentToolStripMenuItem
+            // 
+            this.developmentToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pullFromPCSX2ToolStripMenuItem,
+            this.pushToPCSX2ToolStripMenuItem});
+            this.developmentToolStripMenuItem.Name = "developmentToolStripMenuItem";
+            this.developmentToolStripMenuItem.Size = new System.Drawing.Size(113, 24);
+            this.developmentToolStripMenuItem.Text = "Development";
+            // 
+            // pullFromPCSX2ToolStripMenuItem
+            // 
+            this.pullFromPCSX2ToolStripMenuItem.Name = "pullFromPCSX2ToolStripMenuItem";
+            this.pullFromPCSX2ToolStripMenuItem.Size = new System.Drawing.Size(198, 26);
+            this.pullFromPCSX2ToolStripMenuItem.Text = "Pull from PCSX2";
+            this.pullFromPCSX2ToolStripMenuItem.Click += new System.EventHandler(this.pullFromPCSX2ToolStripMenuItem_Click);
+            // 
+            // pushToPCSX2ToolStripMenuItem
+            // 
+            this.pushToPCSX2ToolStripMenuItem.Enabled = false;
+            this.pushToPCSX2ToolStripMenuItem.Name = "pushToPCSX2ToolStripMenuItem";
+            this.pushToPCSX2ToolStripMenuItem.Size = new System.Drawing.Size(198, 26);
+            this.pushToPCSX2ToolStripMenuItem.Text = "Push to PCSX2";
+            this.pushToPCSX2ToolStripMenuItem.Click += new System.EventHandler(this.pushToPCSX2ToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -155,18 +181,27 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // contextMenuStripMain
+            // contextMenuActions
             // 
-            this.contextMenuStripMain.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenuStripMain.Name = "contextMenuStripMain";
-            this.contextMenuStripMain.Size = new System.Drawing.Size(61, 4);
+            this.contextMenuActions.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuActions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyValueToWholeColumnToolStripMenuItem});
+            this.contextMenuActions.Name = "contextMenuStripMain";
+            this.contextMenuActions.Size = new System.Drawing.Size(267, 56);
+            // 
+            // copyValueToWholeColumnToolStripMenuItem
+            // 
+            this.copyValueToWholeColumnToolStripMenuItem.Name = "copyValueToWholeColumnToolStripMenuItem";
+            this.copyValueToWholeColumnToolStripMenuItem.Size = new System.Drawing.Size(266, 24);
+            this.copyValueToWholeColumnToolStripMenuItem.Text = "Copy value to whole column";
+            this.copyValueToWholeColumnToolStripMenuItem.Click += new System.EventHandler(this.copyValueToWholeColumnToolStripMenuItem_Click);
             // 
             // advancedDataGridView
             // 
             this.advancedDataGridView.AllowUserToAddRows = false;
             this.advancedDataGridView.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Beige;
-            this.advancedDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
+            this.advancedDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.advancedDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.advancedDataGridView.ColumnHeadersHeight = 29;
             this.advancedDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
@@ -174,6 +209,7 @@
             this.advancedDataGridView.FilterAndSortEnabled = true;
             this.advancedDataGridView.Location = new System.Drawing.Point(0, 28);
             this.advancedDataGridView.Margin = new System.Windows.Forms.Padding(4);
+            this.advancedDataGridView.MultiSelect = false;
             this.advancedDataGridView.Name = "advancedDataGridView";
             this.advancedDataGridView.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.advancedDataGridView.RowHeadersWidth = 51;
@@ -185,30 +221,7 @@
             this.advancedDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.advancedDataGridView_CellContentClick);
             this.advancedDataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.advancedDataGridView_DataBindingComplete);
             this.advancedDataGridView.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.advancedDataGridView_RowPostPaint);
-            // 
-            // developmentToolStripMenuItem
-            // 
-            this.developmentToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.pullFromPCSX2ToolStripMenuItem,
-            this.pushToPCSX2ToolStripMenuItem});
-            this.developmentToolStripMenuItem.Name = "developmentToolStripMenuItem";
-            this.developmentToolStripMenuItem.Size = new System.Drawing.Size(113, 24);
-            this.developmentToolStripMenuItem.Text = "Development";
-            // 
-            // pullFromPCSX2ToolStripMenuItem
-            // 
-            this.pullFromPCSX2ToolStripMenuItem.Name = "pullFromPCSX2ToolStripMenuItem";
-            this.pullFromPCSX2ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.pullFromPCSX2ToolStripMenuItem.Text = "Pull from PCSX2";
-            this.pullFromPCSX2ToolStripMenuItem.Click += new System.EventHandler(this.pullFromPCSX2ToolStripMenuItem_Click);
-            // 
-            // pushToPCSX2ToolStripMenuItem
-            // 
-            this.pushToPCSX2ToolStripMenuItem.Enabled = false;
-            this.pushToPCSX2ToolStripMenuItem.Name = "pushToPCSX2ToolStripMenuItem";
-            this.pushToPCSX2ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.pushToPCSX2ToolStripMenuItem.Text = "Push to PCSX2";
-            this.pushToPCSX2ToolStripMenuItem.Click += new System.EventHandler(this.pushToPCSX2ToolStripMenuItem_Click);
+            this.advancedDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.advancedDataGridView_MouseClick);
             // 
             // MainForm
             // 
@@ -228,6 +241,7 @@
             this.statusStripMain.PerformLayout();
             this.menuStripMain.ResumeLayout(false);
             this.menuStripMain.PerformLayout();
+            this.contextMenuActions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -240,7 +254,7 @@
         private System.Windows.Forms.MenuStrip menuStripMain;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStripMain;
+        private System.Windows.Forms.ContextMenuStrip contextMenuActions;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -252,6 +266,7 @@
         private System.Windows.Forms.ToolStripMenuItem developmentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pullFromPCSX2ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pushToPCSX2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyValueToWholeColumnToolStripMenuItem;
     }
 }
 

@@ -422,5 +422,28 @@ namespace TXR0_Rival_Data
             }
             MessageBox.Show(this, "Failed to attach to PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+
+        private void advancedDataGridView_MouseClick(object sender, MouseEventArgs e)
+        {
+            var cell = advancedDataGridView.HitTest(e.Location.X, e.Location.Y);
+            if (cell.Type == DataGridViewHitTestType.Cell && advancedDataGridView.DataSource != null && e.Button == MouseButtons.Right)
+            {
+                advancedDataGridView.Rows[cell.RowIndex].Cells[cell.ColumnIndex].Selected = true;
+                contextMenuActions.Show(Cursor.Position);
+            }
+        }
+
+        private void copyValueToWholeColumnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (advancedDataGridView.SelectedCells.Count > 0)
+            {
+                var ValueToCopy = advancedDataGridView.SelectedCells[0].Value;
+                var ColumnIndex = advancedDataGridView.SelectedCells[0].ColumnIndex;
+                foreach(DataGridViewRow row in advancedDataGridView.Rows)
+                {
+                    row.Cells[ColumnIndex].Value = ValueToCopy;
+                }
+            }
+        }
     }
 }
